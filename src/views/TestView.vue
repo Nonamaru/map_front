@@ -5,6 +5,8 @@
       <span>Center: {{ center }}</span>
       <span>Zoom: {{ zoom }}</span>
       <span>Bounds: {{ bounds }}</span>
+      SUka
+      suka
     </div>
     <l-map
       style="height: 80%; width: 100%"
