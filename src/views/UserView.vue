@@ -56,37 +56,46 @@
           :url=url
           :attribution="attribution"
         />
-        <l-marker v-for="cam in camera" :key="cam.id" :lat-lng="[cam.lat,cam.lng]" @click="showMarkerPopup(cam.id)">
+        <l-marker v-for="cam in camera" :key="cam.id" :lat-lng="[cam.attributes.lat,cam.attributes.lng]" @click="showMarkerPopup(cam.id)">
           <l-icon>
             <img class="img-icon" src="@/assets/marker_cam_white.png">
           </l-icon>
         </l-marker>
       </l-map>
     </div>
-    <div id="cameras">
 
+    <div id="cameras">
       <div id="header">
         <div id="search"><input type="text" placeholder="Search... (address, description)" v-model="vvod" /></div>
       </div>
       <div id="all-cams">
         <AdView class="cams" />
+        <!-- <div class="cams" v-for="(cam) in (camera, filteredList())" :key="cam"> -->
         <div class="cams" v-for="(cam) in (camera, filteredList())" :key="cam">
-          <!-- Show cameras -->
             <div class="params">
-              <span v-if="cam" id="address" @click="zoomUpdated(17); centerUpdated([cam.lat, cam.lng]); showMarkerPopup(cam.id)">{{cam.adress}}</span>
-              <iframe  :src="cam.link_to_stream"     
-              scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" 
-              mozallowfullscreen="true" v-if="cam"></iframe>
-              <span v-if="cam">{{cam.description}}</span>
-              <span v-if="cam"><a :href="cam.link_to_camera">{{cam.camera_model}}</a></span>
+              <span v-if="cam" id="address" @click="zoomUpdated(17); centerUpdated([cam.attributes.lat, cam.attributes.lng]); showMarkerPopup(cam.id)">{{cam.attributes.adress}}</span>
+              
+              <iframe 
+                :src="cam.attributes.link_to_stream"     
+                scrolling="no" 
+                allowfullscreen="true" 
+                webkitallowfullscreen="true" 
+                mozallowfullscreen="true" 
+                v-if="cam"
+              ></iframe>
+
+              <span v-if="cam">{{cam.attributes.description}}</span>
+              <span v-if="cam">
+                <a :href="cam.attributes.link_to_camera">{{cam.attributes.camera_model}}</a>
+              </span>
               <div id="get-archive">
                 <span v-if="cam" class="button">
                   Получить архив записи: 
                 </span>
-                <a :href="`tel:${cam.hot_line_telephone}`" v-if="cam">
-                  {{cam.hot_line_telephone}}
+                <a :href="`tel:${cam.attributes.hot_line_telephone}`" v-if="cam">
+                  {{cam.attributes.hot_line_telephone}}
                 </a>
-                <div v-if="cam" class="button-div" @click="shadow = true; form.camAddress = cam.adress; form.camModel = cam.camera_model">
+                <div v-if="cam" class="button-div" @click="shadow = true; form.camAddress = cam.attributes.adress; form.camModel = cam.attributes.camera_model">
                   Получить архив записи 
                 </div>
               </div>
@@ -94,6 +103,7 @@
           </div>
         </div>
     </div>
+
   </div>
 
       <div class="content" v-if="isPopup && popupCam">
@@ -101,19 +111,19 @@
           <Icon class="popup-icon" icon="mingcute:close-circle-fill" @click="isPopup = false" />
         </div>
         
-        <div class="popup-content">{{popupCam.adress}}</div>
-        <iframe  :src="popupCam.link_to_stream"  
+        <div class="popup-content">{{popupCam.attributes.adress}}</div>
+        <iframe :src="popupCam.attributes.link_to_stream"  
             style="width: 320px; height: 180px; border: 0px"   
             scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" 
             mozallowfullscreen="true" ></iframe>
-        <div class="popup-content">{{popupCam.description}}</div>
-        <div class="popup-content">{{popupCam.comment}}</div>
+        <div class="popup-content">{{popupCam.attributes.description}}</div>
+        <div class="popup-content">{{popupCam.attributes.comment}}</div>
         <div class="popup-content">
           <div class="archive" 
           @click="shadow = true; 
           isPopup = false; 
-          form.camAddress = popupCam.adress; 
-          form.camModel = popupCam.camera_model"
+          form.camAddress = popupCam.attributes.adress; 
+          form.camModel = popupCam.attributes.camera_model"
           >
             Получить архив
           </div>
@@ -220,7 +230,7 @@
         attribution: '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
         bounds: null,
         zoom: 10,
-        center: [56.900016, 60.563729],
+        center: [10,10],
         moment,
         markers: [],
         camera: null,
@@ -269,14 +279,18 @@
       setEditLayer(i) {this.editLayer = i;},
 
       async updateData() {
-        this.camera = await ApiMethods.getCameras();
+        // this.camera = await ApiMethods.getCameras()
+        await ApiMethods.getCameras()
+        .then((response)=>{this.camera = response;})
+        .catch(err => console.log(err));
         this.titles = this.camera;
       },
+
       makeRoute(positions) {
         for(let i = 0; i < positions.length; i++)
-        {
-          this.markers.push([positions[i].attributes.lat, positions[i].attributes.lng]);
-        }
+          {
+            this.markers.push([positions[i].attributes.lat, positions[i].attributes.lng]);
+          }
       },
       async showMarkerPopup(id) {
         await ApiMethods.getCameraById(id).then(r => {
@@ -285,25 +299,17 @@
         this.popupId = id;
         this.isPopup = true;
       },
-      async showMobileMarkerPopup(id) {
-        await ApiMethods.getCameraById(id).then(r => {
-          this.popup_mobile_cam = r;
-        });
-        this.popup_mobile.id = id;
-        this.cam_popup = true;
-        this.arrow = false;
-      },
       filteredList() {
         const addressCheck = this.titles.filter((cam) =>
-        cam.adress.toLowerCase().includes(this.vvod.toLowerCase()));
+        cam.attributes.adress.toLowerCase().includes(this.vvod.toLowerCase()));
         const descriptionCheck = this.titles.filter((cam) =>
-        cam.description.toLowerCase().includes(this.vvod.toLowerCase()));
+        cam.attributes.description.toLowerCase().includes(this.vvod.toLowerCase()));
         const commentCheck = this.titles.filter((cam) =>
-        cam.comment.toLowerCase().includes(this.vvod.toLowerCase()));
+        cam.attributes.comment.toLowerCase().includes(this.vvod.toLowerCase()));
         const camModelCheck = this.titles.filter((cam) =>
-        cam.camera_model.toString().toLowerCase().includes(this.vvod.toLowerCase()));
+        cam.attributes.camera_model.toString().toLowerCase().includes(this.vvod.toLowerCase()));
         const hotLineTelCheck = this.titles.filter((cam) =>
-        cam.hot_line_telephone.toString().toLowerCase().includes(this.vvod.toLowerCase()));
+        cam.attributes.hot_line_telephone.toString().toLowerCase().includes(this.vvod.toLowerCase()));
         if (addressCheck.length) {
           return addressCheck;
         } else if (descriptionCheck.length) {
@@ -318,14 +324,12 @@
       },
     },
     async mounted() {
-      //this.city = await ApiMethods.getCities();
+      await axios.get("https://api.sypexgeo.net/json/")
+        .then(response => this.totaldate = response.data.city);
+      this.center = [this.totaldate.lat, this.totaldate.lon]
+
       await this.updateData();
       this.makeRoute(this.camera);
-      await axios.get("https://api.ipify.org/?format=json")
-        .then(response => this.ipaddr = response.data.ip);
-      await axios.get(`http://ip-api.com/json/${this.ipaddr}`)
-        .then(response => this.totaldate = response.data);
-      this.center = [this.totaldate.lat, this.totaldate.lon];
     },
 
   };

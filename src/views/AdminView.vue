@@ -162,6 +162,7 @@ import {
 } from "@vue-leaflet/vue-leaflet";
 import ApiMethods from '@/api/ApiMethods';
 import "leaflet/dist/leaflet.css";
+import axios from 'axios';
 export default {
   components: {
     LMap,
@@ -176,7 +177,7 @@ export default {
       attribution: '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       bounds: null,
       zoom: 10,
-      center: [56.900016, 60.563729],
+      center: [10, 10],
       markers: [],
       camera: null,
       form: {
@@ -313,6 +314,9 @@ export default {
     },
   },
   async mounted() {
+    await axios.get("https://api.sypexgeo.net/json/")
+      .then(response => this.totaldate = response.data.city);
+    this.center = [this.totaldate.lat, this.totaldate.lon]
     await this.updateData();
     this.makeRoute(this.camera);
   },
