@@ -17,12 +17,11 @@
         @click="addMarker"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <l-marker v-for="cam in camera" :key="cam.id" :lat-lng="[cam.lat,cam.lng]" @click="showMarkerPopup(cam.id)">
+      <l-marker v-for="cam in camera" :key="cam.id" :lat-lng="[cam.attributes.lat,cam.attributes.lng]" @click="showMarkerPopup(cam.id)">
       </l-marker>
       <l-marker v-if="currentMarker" :lat-lng="currentMarker">
       </l-marker>
     </l-map>
-
   </div>
   <div id="cameras">
     <!-- Add camera manual -->
@@ -83,23 +82,23 @@
         <!-- Edit camera layer -->
         <div class="params-manual">
           <span>Широта: </span>
-          <input type='text' v-model="cam.lat" />
+          <input type='text' v-model="cam.attributes.lat" />
           <span>Долгота: </span>
-          <input type='text' v-model="cam.lng" />
+          <input type='text' v-model="cam.attributes.lng" />
           <span>Адрес: </span>
-          <input type='text' v-model="cam.adress" />
+          <input type='text' v-model="cam.attributes.adress" />
           <span>Описание: </span>
-          <input type='text' v-model="cam.description" />
+          <input type='text' v-model="cam.attributes.description" />
           <span>Комментарий: </span>
-          <input type='text' v-model="cam.comment" />
+          <input type='text' v-model="cam.attributes.comment" />
           <span>Ссылка на видеопоток: </span>
-          <input type='text' v-model="cam.link_to_stream" />
+          <input type='text' v-model="cam.attributes.link_to_stream" />
           <span>Ссылка на камеру: </span>
-          <input type='text' v-model="cam.link_to_camera" />
+          <input type='text' v-model="cam.attributes.link_to_camera" />
           <span>Модель камеры: </span>
-          <input type='text' v-model="cam.camera_model" />
+          <input type='text' v-model="cam.attributes.camera_model" />
           <span>Телефон обратной связи: </span>
-          <input type='text' v-model="cam.hot_line_telephone" />
+          <input type='text' v-model="cam.attributes.hot_line_telephone" />
         </div>
         <div id="edit-buttons">
           <button @click="editCam(cam)">submit</button>
@@ -110,14 +109,14 @@
       <!-- Show cameras -->
       <div class="group" v-if="editLayer !== index">
         <div class="params">
-            <span v-if="cam" id="address" @click="zoomUpdated(17); centerUpdated([cam.lat, cam.lng])">{{cam.adress}}</span>
-            <iframe  :src="cam.link_to_stream"     
+            <span v-if="cam" id="address" @click="zoomUpdated(17); centerUpdated([cam.attributes.lat, cam.attributes.lng])">{{cam.attributes.adress}}</span>
+            <iframe  :src="cam.attributes.link_to_stream"     
             scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" 
             mozallowfullscreen="true" v-if="cam"></iframe>
-            <span v-if="cam">{{cam.description}}</span>
-            <span v-if="cam">{{cam.comment}}</span>  
-            <span v-if="cam"><a :href="cam.link_to_camera">"{{cam.camera_model}}"</a></span>
-            <span v-if="cam">Получить архив записи: <a :href="`tel:${cam.hot_line_telephone}`">{{cam.hot_line_telephone}}</a></span>
+            <span v-if="cam">{{cam.attributes.description}}</span>
+            <span v-if="cam">{{cam.attributes.comment}}</span>  
+            <span v-if="cam"><a :href="cam.attributes.link_to_camera">"{{cam.attributes.camera_model}}"</a></span>
+            <span v-if="cam">Получить архив записи: <a :href="`tel:${cam.attributes.hot_line_telephone}`">{{cam.attributes.hot_line_telephone}}</a></span>
         </div>
       </div>
 
@@ -176,8 +175,8 @@ export default {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution: '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       bounds: null,
-      zoom: 8,
-      center: [57.294016, 60.763729],
+      zoom: 10,
+      center: [56.900016, 60.563729],
       markers: [],
       camera: null,
       form: {
@@ -221,22 +220,13 @@ export default {
     };
   },
   methods: {
-    AdEditorChild () {
-      this.AdEditor = !this.AdEditor
-    },
+    AdEditorChild () {this.AdEditor = !this.AdEditor},
 
-    async boundsUpdated (bounds) {
-      this.bounds = bounds;
-    },
-    async zoomUpdated (zoom) {
-      this.zoom = zoom;
-    },
-    async centerUpdated (center) {
-      this.center = center;
-    },
-    setEditLayer(i) {
-      this.editLayer = i;
-    },
+    async boundsUpdated (bounds) {this.bounds = bounds;},
+    async zoomUpdated (zoom) {this.zoom = zoom;},
+    async centerUpdated (center) {this.center = center;},
+    setEditLayer(i) {this.editLayer = i;},
+
     async editCam(cam) {
       await ApiMethods.editCamerasManual(cam);
       this.editLayer = null;
@@ -283,7 +273,7 @@ export default {
     makeRoute(positions) {
       for(let i = 0; i < positions.length; i++)
       {
-        this.markers.push([positions[i].lat, positions[i].lng]);
+        this.markers.push([positions[i].attributes.lat, positions[i].attributes.lng]);
       }
     },
     async showMarkerPopup(id) {
@@ -451,12 +441,8 @@ export default {
   margin-right: 20px;
   margin-bottom: 15px;
 }
-#header div:hover{
-  color: #750b3d;
-}
-#header div:active{
-  color: #BF1162;
-}
+#header div:hover{color: #750b3d;}
+#header div:active{color: #BF1162;}
 #header input{
   border-radius: 3px;
   border: none;
@@ -464,9 +450,7 @@ export default {
   margin-bottom: 10px;
 }
 
-#all-cams{
-  margin-top: 45px;
-}
+#all-cams{margin-top: 45px;}
 
 .group{
   display: flex;

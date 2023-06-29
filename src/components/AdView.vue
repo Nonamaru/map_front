@@ -1,7 +1,9 @@
 <template>
   <div class="camera">
     <div id="banner">
-      <a :href="link_to_redirect"><img :src="link_to_pic"></a>
+      <a :href="link_to_redirect">
+        <img :src="link_to_pic">
+      </a>
     </div>
   </div>
 </template>
@@ -19,8 +21,8 @@ export default{
   },
   async mounted() {
     this.ads = await ApiMethods.showAd();
-    this.link_to_redirect = this.ads[0].link_to_redirect;
-    this.link_to_pic = this.ads[0].link_to_pic;
+    this.link_to_redirect = this.ads[0].attributes.link_to_redirect;
+    this.link_to_pic = this.ads[0].attributes.link_to_pic;
   },
 }
 </script>
@@ -29,10 +31,9 @@ export default{
 .camera{
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
   justify-content: center;
   border: 3px solid #14A1D9;
-  border-bottom: none;
+  /* border-bottom: none; */
   border-radius: 5px;
   padding: 0 !important;
   background-color: #c23979;
@@ -43,9 +44,10 @@ export default{
   height: 100%;
   width: 100%;
 }
-#banner img{
+#banner a img{
   height: 100%;
   width: 100%;
   border-radius: 10px;
+  object-fit: cover;
 }
 </style>

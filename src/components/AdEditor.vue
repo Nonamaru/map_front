@@ -9,7 +9,8 @@
             <input type="text" v-model="form.link_to_redirect" />
         </div>
         <div id="buttons">
-            <button @click="AdEditor">Ok</button>
+            <button v-if="isAdd" @click="AdEditor">Ok Edit</button>
+            <button v-if="!isAdd" @click="AdAdd">Ok Add</button>
             <button @click='AdEdit'>Close</button>
         </div>
     </div>
@@ -23,12 +24,18 @@ export default ({
                 id: 1,
                 link_to_pic: '',
                 link_to_redirect: '',
+                isAdd: false,
             },
         }
     },
     methods: {
         AdEdit(){this.$emit('AdEdit', {})},
         async updateData(){
+            if ((this.ads.link_to_redirect && this.ads.link_to_pic) == undefined){
+                this.isAdd = false;
+            } else {
+                this.isAdd = true;
+            }
             this.ads = await ApiMethods.showAd();
             this.form.link_to_redirect = this.ads[0].link_to_redirect;
             this.form.link_to_pic = this.ads[0].link_to_pic;
@@ -40,6 +47,13 @@ export default ({
                 this.$router.go(0);
             });
         },
+        async AdAdd(){
+            await ApiMethods.addAd(this.form).then(() => {
+                this.AdEdit();
+                this.updateData();
+                this.$router.go(0);
+            });
+        }
     },
     async mounted() {
         await this.updateData();

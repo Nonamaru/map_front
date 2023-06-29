@@ -219,8 +219,8 @@
         url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         attribution: '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
         bounds: null,
-        zoom: 13,
-        center: [1, 1],
+        zoom: 10,
+        center: [56.900016, 60.563729],
         moment,
         markers: [],
         camera: null,
@@ -263,57 +263,11 @@
       };
     },
     methods: {      
-      async boundsUpdated (bounds) {
-        this.bounds = bounds;
-      },
-      async zoomUpdated (zoom) {
-        this.zoom = zoom;
-      },
-      async centerUpdated (center) {
-        this.center = center;
-      },
-      setEditLayer(i) {
-        this.editLayer = i;
-      },
-      async editCam(cam) {
-        await ApiMethods.editCamerasManual(cam);
-        this.editLayer = null;
-      },
-      async addFreeCamera(){
-        await ApiMethods.addCamerasManual(this.freeform).then(() => {
-          this.freeform.lat = '';
-          this.freeform.lng = '';
-          this.freeform.address = '';
-          this.freeform.description = '';
-          this.freeform.comment = '';
-          this.freeform.link_to_stream = '';
-          this.freeform.link_to_camera = '';
-          this.freeform.camera_model = '';
-          this.freeform.hot_line_telephone = '';
-          this.updateData();
-        });
-      },
-      async addMarker(event) {
-        this.currentMarker = event.latlng;
-        this.form.lat = event.latlng.lat
-        this.form.lng = event.latlng.lng
-      },
-      async sendData() {
-        this.response = await ApiMethods.addCameras(this.form).then(()=> {
-          this.updateData();
-          this.markers.push([this.form.lat, this.form.lng]);
-          this.form.lat = '';
-          this.form.lng = '';
-          this.currentMarker = null;
-          this.form.selected_address = '';
-          this.form.description = '';
-          this.form.comment = '';
-          this.form.link_to_stream = '';
-          this.form.link_to_camera = '';
-          this.form.camera_model = '';
-          this.form.hot_line_telephone = '';
-        });
-      },
+      async boundsUpdated (bounds) {this.bounds = bounds;},
+      async zoomUpdated (zoom) {this.zoom = zoom;},
+      async centerUpdated (center) {this.center = center;},
+      setEditLayer(i) {this.editLayer = i;},
+
       async updateData() {
         this.camera = await ApiMethods.getCameras();
         this.titles = this.camera;
@@ -321,7 +275,7 @@
       makeRoute(positions) {
         for(let i = 0; i < positions.length; i++)
         {
-          this.markers.push([positions[i].lat, positions[i].lng]);
+          this.markers.push([positions[i].attributes.lat, positions[i].attributes.lng]);
         }
       },
       async showMarkerPopup(id) {
@@ -338,11 +292,6 @@
         this.popup_mobile.id = id;
         this.cam_popup = true;
         this.arrow = false;
-      },
-      async deleteCamera(id) {
-        await ApiMethods.deleteCameras(id);
-        let i = this.camera.map(item => item.id).indexOf(id) 
-        this.camera.splice(i, 1)
       },
       filteredList() {
         const addressCheck = this.titles.filter((cam) =>

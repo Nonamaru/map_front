@@ -1,13 +1,13 @@
 import axios from 'axios'
-import { useCookies } from "vue3-cookies";
+// import { useCookies } from "vue3-cookies";
 
-const { cookies } = useCookies();
+// const { cookies } = useCookies();
 
 export default (url=process.env.VUE_APP_API) => {
     return axios.create({
         baseURL: url,
         headers: {
-            Authorization: 'Bearer '.concat(cookies.get('user_token'))
+            Authorization: 'Bearer '.concat(process.env.VUE_APP_TOKEN)
         }
     })
 }
