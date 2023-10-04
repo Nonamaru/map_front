@@ -12,14 +12,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap');
 :root{
   --search-background: #F6F6F6;
-  --card-background: #F2F6F8;
   --input-border-color: #E1E3E6;
   --placeholder-color: #AAAEB3;
   --colors-link: #1FA1FF;
+
+  --card-background: #F2F6F8;
   --card-button-background: #C8235A;
   --card-button-background-hover: linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.10) 100%), #C8235A;
   --card-button-background-active: linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%), #C8235A;
-
   --card-title-color: #2D2D2D;
   --card-street-color: rgba(45, 45, 45, 0.50);
 

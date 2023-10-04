@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import NewUser from '@/views/NewUser.vue';
+import NewUser from '@/views/UsersView.vue';
 import AuthUser from '@/views/AuthUser.vue';
 
 const zareganLi = function (to, from, next) {
