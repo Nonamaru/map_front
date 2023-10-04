@@ -1,8 +1,4 @@
 import ApiPublic from "@/api/ApiPublic";
-// import ApiProtected from "@/api/ApiProtected";
-// import {useCookies} from "vue3-cookies";
-
-// const {cookies} = useCookies();
 
 export default {
     // Получить список камер

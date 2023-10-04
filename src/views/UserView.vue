@@ -42,7 +42,7 @@
 
     <div id="map">
       <l-map
-        :options="{attributionControl:false}"
+        :options="{attributionControl:false, zoomControl: true}"
         :zoom="zoom"
         :maxZoom="18"
         :maxNativeZoom="18"
@@ -70,19 +70,21 @@
       </div>
       <div id="all-cams">
         <AdView class="cams" />
-        <!-- <div class="cams" v-for="(cam) in (camera, filteredList())" :key="cam"> -->
         <div class="cams" v-for="(cam) in (camera, filteredList())" :key="cam">
             <div class="params">
               <span v-if="cam" id="address" @click="zoomUpdated(17); centerUpdated([cam.attributes.lat, cam.attributes.lng]); showMarkerPopup(cam.id)">{{cam.attributes.adress}}</span>
               
-              <iframe 
-                :src="cam.attributes.link_to_stream"     
-                scrolling="no" 
-                allowfullscreen="true" 
-                webkitallowfullscreen="true" 
-                mozallowfullscreen="true" 
-                v-if="cam"
-              ></iframe>
+              <div class="iframe-video" v-if="cam">
+                <iframe 
+                  :src="cam.attributes.link_to_stream"     
+                  allowfullscreen
+                  frameborder="0"
+                  scrolling="no"
+                  v-if="cam"
+                  height="100"
+                >
+                </iframe>
+              </div>
 
               <span v-if="cam">{{cam.attributes.description}}</span>
               <span v-if="cam">
@@ -112,10 +114,15 @@
         </div>
         
         <div class="popup-content">{{popupCam.attributes.adress}}</div>
-        <iframe :src="popupCam.attributes.link_to_stream"  
-            style="width: 320px; height: 180px; border: 0px"   
-            scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" 
-            mozallowfullscreen="true" ></iframe>
+        <div class="iframe-video">
+          <iframe 
+            :src="popupCam.attributes.link_to_stream"  
+            allowfullscreen
+            frameborder="0"
+            scrolling="no"
+          >
+          </iframe>
+        </div>
         <div class="popup-content">{{popupCam.attributes.description}}</div>
         <div class="popup-content">{{popupCam.attributes.comment}}</div>
         <div class="popup-content">
@@ -180,9 +187,15 @@
             ">
               {{cam.adress}}
             </span>
-            <iframe  :src="cam.link_to_stream"     
-            scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" 
-            mozallowfullscreen="true" v-if="cam"></iframe>
+            <iframe  
+              :src="cam.link_to_stream"     
+              scrolling="no" 
+              allowfullscreen="allowfullscreen" 
+              webkitallowfullscreen="true" 
+              mozallowfullscreen="true" 
+              v-if="cam"
+            >
+            </iframe>
             <div id="get-archive">
               <span v-if="cam" id="button" @click="shadow = true; form.camAddress = cam.adress; form.camModel = cam.camera_model">Получить архив записи: </span>
               <a :href="`tel:${cam.hot_line_telephone}`" v-if="cam">{{cam.hot_line_telephone}}</a>
@@ -213,8 +226,8 @@
     LMarker,
     LIcon,
   } from "@vue-leaflet/vue-leaflet";
-  import ApiMethods from '@/api/ApiMethods';
   import "leaflet/dist/leaflet.css";
+  import ApiMethods from '@/api/ApiMethods';
   export default {
     components: {
       LMap,
@@ -413,12 +426,8 @@
     border-radius: 10px;
     cursor: pointer;
   }
-  #feedback-buttons .buttons:hover{
-    background-color: #bf1162c5;
-  }
-  #feedback-buttons .buttons:active{
-    background-color: #bf116298;
-  }
+  #feedback-buttons .buttons:hover{background-color: #bf1162c5;}
+  #feedback-buttons .buttons:active{background-color: #bf116298;}
   #map{
     width: 80vw;
     border-radius: 5px;
@@ -466,9 +475,7 @@
     border: none;
     padding: 5px;
   }
-  #all-cams{
-    margin-top: 45px;
-  }
+  #all-cams{margin-top: 45px;}
   .cams{
     padding: 10px;
     margin: 6px;
@@ -477,10 +484,10 @@
     outline-offset: -2px;
     font-size: 10pt;
     margin-bottom: 10px;
-    display: flex;
+    /* display: flex;
     flex-direction: row;
     justify-content: space-between;
-    min-width: 300px;
+    min-width: 300px; */
   }
 
   .params{
@@ -488,15 +495,9 @@
     flex-direction: column;
     flex-wrap: wrap;
   }
-  .params #address{
-    cursor: pointer;
-  }
-  .params #address:hover{
-    text-decoration: underline;
-  }
-  #get-archive a{
-    font-size: 11pt;
-  }
+  .params #address{cursor: pointer;}
+  .params #address:hover{text-decoration: underline;}
+  #get-archive a{font-size: 11pt;}
   .button-div{
     display: flex;
     padding: 5px;
@@ -510,14 +511,23 @@
   }
   .button-div:hover{transition: 0.3s; background-color:#8f0e4a;}
   .button-div:active{background-color:#bf116291;}
-  .params span{
-    font-size: 12pt;
+  .params span{font-size: 12pt;}
+
+  .iframe-video{
+    position: relative;
+    width: 99%;
+    height: 300px;
+    margin-top: 1vw;
+    margin-bottom: 1vw;
+    z-index: 1;
   }
-  .params iframe{
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid black;
-    border-radius: 3px;
+  .iframe-video iframe, object, embed{
+    border-radius: 6px;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
   }
 
   .content{
@@ -536,9 +546,7 @@
     background-color: white;
     z-index: 9999;
   }
-  .icon-p{
-    width: 100%;
-  }
+  .icon-p{width: 100%;}
   .popup-icon{
     cursor: pointer;
     font-size: 20pt;
@@ -546,21 +554,8 @@
     float: right;
     text-align: right;
   }
-  .popup-icon:active{
-    color: #bf116291;
-  }
-  .content iframe{
-    border-radius: 5px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    width: 100%;
-    height: 100%;
-  }
-  .content span{
-    color: #997D8A;
-  }
+  .popup-icon:active{color: #bf116291;}
+  .content span{color: #997D8A;}
   .popup-content{
     margin-left: 5px;
     margin-bottom: 5px;
