@@ -45,47 +45,88 @@ body{
   color: #403439;
 }
 
-
-/*POPUP*/
-.leaflet-popup{
-  margin-bottom: 30px !important;
-}
-.leaflet-popup-content-wrapper {
-  // margin-bottom: 10px !important;
-  padding: 0px !important;
-}
-.leaflet-popup-content-wrapper .leaflet-popup-content {
-  margin: 0;
-  width: 360px !important;
-}
-.leaflet-popup-tip {
-  width: 12px !important;  
-  height: 12px !important;
-  margin-top: -10px !important;
-}
-.leaflet-popup-close-button{
-  border-radius: 50% !important;
-  background-color: var(--card-street-color) !important;
-  top: 8px !important;
-  right: 8px !important;
-  z-index: 6 !important;
-  span{
-    color: white !important;
-    // font: 14px/14px Tahoma, Verdana, sans-serif !important;
-    vertical-align: baseline !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    &:hover{
-      color: rgba(255, 255, 255, 0.8) !important;
-    }
-    &:active{
-      color: rgba(255, 255, 255, 0.8) !important;
+/*POPUP DESKTOP*/
+@media screen and (min-width: 900px){
+  .leaflet-popup{
+    margin-bottom: 30px !important;
+  }
+  .leaflet-popup-content-wrapper {
+    // margin-bottom: 10px !important;
+    padding: 0px !important;
+  }
+  .leaflet-popup-content-wrapper .leaflet-popup-content {
+    margin: 0;
+    width: 360px !important;
+  }
+  .leaflet-popup-tip {
+    width: 12px !important;  
+    height: 12px !important;
+    margin-top: -10px !important;
+  }
+  .leaflet-popup-close-button{
+    border-radius: 50% !important;
+    background-color: var(--card-street-color) !important;
+    top: 8px !important;
+    right: 8px !important;
+    z-index: 6 !important;
+    span{
+      color: white !important;
+      // font: 14px/14px Tahoma, Verdana, sans-serif !important;
+      vertical-align: baseline !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &:hover{
+        color: rgba(255, 255, 255, 0.8) !important;
+      }
+      &:active{
+        color: rgba(255, 255, 255, 0.8) !important;
+      }
     }
   }
 }
 /*-----*/
-
+/*POPUP MOBILE*/
+@media screen and (max-width: 900px){
+  .leaflet-popup{
+    margin-bottom: -45vh !important;
+  }
+  .leaflet-popup-content-wrapper {
+    // margin-bottom: 10px !important;
+    padding: 0px !important;
+  }
+  .leaflet-popup-content-wrapper .leaflet-popup-content {
+    margin: 0;
+    width: 360px !important;
+  }
+  .leaflet-popup-tip {
+    width: 12px !important;  
+    height: 12px !important;
+    margin-top: -10px !important;
+  }
+  .leaflet-popup-close-button{
+    border-radius: 50% !important;
+    background-color: var(--card-street-color) !important;
+    top: 8px !important;
+    right: 8px !important;
+    z-index: 6 !important;
+    span{
+      color: white !important;
+      // font: 14px/14px Tahoma, Verdana, sans-serif !important;
+      vertical-align: baseline !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &:hover{
+        color: rgba(255, 255, 255, 0.8) !important;
+      }
+      &:active{
+        color: rgba(255, 255, 255, 0.8) !important;
+      }
+    }
+  }
+}
+/*-----*/
 
 /*TOOLTIP*/
 .leaflet-tooltip-left {
